@@ -1,10 +1,7 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
-import { createServer as createViteServer } from "vite";
 import { type Server } from "http";
-// vite config not needed for production static serving
-import { nanoid } from "nanoid";
 
 // viteLogger not needed for production
 
@@ -20,6 +17,10 @@ export function log(message: string, source = "express") {
 }
 
 export async function setupVite(app: Express, server: Server) {
+  // Development mode - dynamically import vite
+  const { createServer: createViteServer } = await import("vite");
+  const { nanoid } = await import("nanoid");
+  
   const serverOptions = {
     middlewareMode: true,
     hmr: { server },
