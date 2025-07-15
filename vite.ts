@@ -61,18 +61,16 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(process.cwd(), "public");
-
-  if (!fs.existsSync(distPath)) {
-    throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
-    );
-  }
-
-  app.use(express.static(distPath));
-
-  // fall through to index.html if the file doesn't exist
+  // Backend-only deployment - serve simple API status page
   app.use("*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+    res.json({
+      message: "Korean Menu Translator Backend API",
+      status: "running",
+      endpoints: {
+        health: "/health",
+        analyze: "/api/analyze-menu",
+        auth: "/api/auth/user"
+      }
+    });
   });
 }
